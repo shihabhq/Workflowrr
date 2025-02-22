@@ -4,7 +4,6 @@ import { use } from "react"; // React 19's `use` hook
 import AuthContext from "../contexts/AuthContext";
 
 const Navbar = () => {
-
   const { user, logOutUser } = use(AuthContext);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -18,16 +17,14 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logOutUser();
-      setIsDropdownOpen(false); 
+      setIsDropdownOpen(false);
     } catch (error) {
       console.error("Failed to logout:", error);
     }
   };
 
-  
   useEffect(() => {
     const handleClickOutside = (event) => {
-      
       if (
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
@@ -38,10 +35,8 @@ const Navbar = () => {
       }
     };
 
-  
     document.addEventListener("mousedown", handleClickOutside);
 
-  
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -52,7 +47,7 @@ const Navbar = () => {
       className="container mx-auto flex justify-between items-center 
     text-btn py-12  max-w-[90%] lg:max-w-[1280px] relative"
     >
-      <h1 className="font-poppins text-2xl md:text-4xl font-bold">WorkFlowr</h1>
+      <h1 className="font-poppins text-2xl sm:text-4xl font-bold">WorkFlowr</h1>
       <div className="relative min-w-20 sm:min-w-42 flex items-center justify-center">
         <FaRegCircleUser
           size={40}
@@ -65,7 +60,7 @@ const Navbar = () => {
           <div
             className="absolute top-12 bg-white shadow-lg rounded-lg p-4 
           sm:min-w-[150px] transform right-1/2 translate-x-1/2"
-            ref={dropdownRef} 
+            ref={dropdownRef}
           >
             {user && (
               <div className="text-gray-800 font-semibold mb-2 text-center">

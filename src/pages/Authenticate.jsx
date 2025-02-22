@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import AuthContext from "../contexts/AuthContext";
-import { SmallLoading } from "../components/Loading";
+import Loading, { SmallLoading } from "../components/Loading";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router";
 
@@ -79,6 +79,10 @@ export default function AuthForm() {
     }
   };
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       <div className="max-w-96 p-6 bg-white shadow-md rounded-lg">
@@ -149,14 +153,7 @@ export default function AuthForm() {
                   disabled={loading}
                   className="w-full cursor-pointer flex items-center justify-center "
                 >
-                  {loading ? (
-                    <span>
-                      logging in...
-                      <SmallLoading />
-                    </span>
-                  ) : (
-                    <span>Login</span>
-                  )}
+                  Login
                 </button>
               ) : (
                 <button
@@ -164,14 +161,7 @@ export default function AuthForm() {
                   className="w-full cursor-pointer flex items-center justify-center"
                   disabled={loading}
                 >
-                  {loading ? (
-                    <span>
-                      Registering...
-                      <SmallLoading />
-                    </span>
-                  ) : (
-                    <span>Register</span>
-                  )}
+                  Register
                 </button>
               )}
             </div>
@@ -187,14 +177,7 @@ export default function AuthForm() {
             className="w-full cursor-pointer flex items-center justify-center gap-2 border py-2 rounded-md hover:bg-gray-100"
           >
             <FaGoogle />
-            {loading ? (
-              <span>
-                logging in...
-                <SmallLoading />
-              </span>
-            ) : (
-              <span>Continue with Google</span>
-            )}
+            <span>Continue with Google</span>
           </button>
         </div>
       </div>
