@@ -1,33 +1,51 @@
+import { use, useState } from "react";
+import { CiCirclePlus } from "react-icons/ci";
+import { useDroppable } from "@dnd-kit/core";
+import AddTaskModal from "./AddTaskModal";
 import TaskCard from "./TaskCard";
-import axios from "axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  rectSortingStrategy,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import TaskContext from "../contexts/TaskContext";
 
-export default function Column({ title, tasks }) {
-  const queryClient = useQueryClient();
-
-  const addTaskMutation = useMutation({
-    mutationFn: async () => {
-      const newTask = { title: "New Task", status: title, userID: "123" };
-      const res = await axios.post("http://localhost:5000/tasks", newTask);
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["tasks", "123"]);
-    },
-  });
+const Column = ({ column, tasks }) => {
+  const [modal, setModal] = useState(false);
 
   return (
-    <div className="w-1/3 bg-gray-200 p-4 rounded-md">
-      <h2 className="text-xl font-bold mb-4">{title}</h2>
-      {tasks.map((task) => (
-        <TaskCard key={task._id} task={task} />
-      ))}
-      <button
-        className="mt-4 w-full bg-blue-500 text-white py-1 rounded-md"
-        onClick={() => addTaskMutation.mutate()}
+    <>
+      <div
+        key={column}
+        className="border border-gray-300 p-4 rounded-lg flex flex-col min-h-[250px] h-fit"
       >
-        + Add Task
-      </button>
-    </div>
+        <h2 className="text-2xl font-bold">{column}</h2>
+
+        {/* Task List Container with flex-grow */}
+        <SortableContext items={tasks} strategy={rectSortingStrategy}>
+          <div className="flex flex-col space-y-4 flex-grow">
+            {tasks?.map((task) => (
+              <TaskCard key={task.id} task={task} />
+            ))}
+          </div>
+        </SortableContext>
+
+        {/* Add Task Button at the Bottom */}
+        <button
+          onClick={() => setModal(true)}
+          className="text-black flex items-center justify-center  
+        px-4 py-2 rounded-lg mt-4 gap-1
+        font-semibold cursor-pointer hover:bg-gray-100 transition-all
+        "
+        >
+          <CiCirclePlus size={24} /> Add Task
+        </button>
+      </div>
+      {modal && (
+        <AddTaskModal column={column} onClose={() => setModal(false)} />
+      )}
+    </>
   );
-}
+};
+
+export default Column;

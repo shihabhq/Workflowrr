@@ -10,7 +10,7 @@ const PrivateRoute = ({ children }) => {
     return <Loading />;
   }
 
-  if (!user && !user.email) {
+  if (!user && !user?.email) {
     return <Navigate to={"/auth"}></Navigate>;
   }
 
