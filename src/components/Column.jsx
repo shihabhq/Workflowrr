@@ -14,15 +14,31 @@ import FirstTask from "./FirstTask";
 const Column = ({ column, tasks }) => {
   const [modal, setModal] = useState(false);
 
-const hi = 'hi'
   return (
     <>
       <div
         key={column}
-        className="border basis-1/3 border-gray-300 
-        p-4 min-w-64 rounded-lg flex flex-col min-h-[250px] h-fit"
+        className={`border basis-1/3 border-gray-100 
+          ${
+            column === "todo"
+              ? "bg-todobg"
+              : column === "ongoing"
+              ? "bg-ongoingbg"
+              : "bg-donebg"
+          }
+        p-4 min-w-64 rounded-lg flex flex-col min-h-[250px] h-fit`}
       >
-        <h2 className="text-2xl font-bold">{column.toUpperCase()}</h2>
+        <h2
+          className={`text-2xl mb-2 font-bold ${
+            column === "todo"
+              ? "text-todo"
+              : column === "ongoing"
+              ? "text-ongoing"
+              : "text-done"
+          }`}
+        >
+          {column.toUpperCase()}
+        </h2>
 
         {/* Task List Container with flex-grow */}
         <SortableContext items={tasks} strategy={rectSortingStrategy}>

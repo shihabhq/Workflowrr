@@ -4,5 +4,11 @@
 @theme {
   --font-inter: "Inter", sans-serif;
   --font-poppins: "Poppins", sans-serif;
-  --color-btn: #17A2B8;
+  --color-btn: #17a2b8;
+  --color-done: #1fc678;
+  --color-ongoing: #1487be;
+  --color-todo: #f9aa49;
+  --color-todobg: rgb(249, 170, 73, 0.2);
+  --color-ongoingbg: rgba(20, 135, 190, 0.2);
+  --color-donebg: rgb(31, 198, 120, 0.2);
 }
