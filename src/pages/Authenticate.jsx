@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
 import AuthContext from "../contexts/AuthContext";
-import Loading, { SmallLoading } from "../components/Loading";
+import Loading from "../components/Loading";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import useAxios from "../hooks/useAxios";
 
 export default function AuthForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const { axiosPublic } = useAxios();
   const {
     loading,
@@ -31,34 +32,34 @@ export default function AuthForm() {
   };
 
   const handleLogin = async () => {
-    setLoading(true);
+   
     setError("");
     if (!credentials.email || !credentials.password) {
       setError("Please fill all the fields");
       setLoading(false);
       return;
     }
+    setIsLoading(true);
     try {
       await userLogin(credentials.email, credentials.password);
       navigate("/");
     } catch (err) {
-      setError("Failed to login: " + err.message);
+      setError("Failed to login: ");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const handleRegister = async () => {
-    setLoading(true);
+    
     setError("");
     if (!credentials.username || !credentials.email || !credentials.password) {
       setError("Please fill all the fields");
       setLoading(false);
       return;
     }
-
+    setIsLoading(true);
     try {
-      setLoading(true);
       await createUser(credentials.email, credentials.password);
       await updateUser({ displayName: credentials.username });
 
@@ -71,12 +72,12 @@ export default function AuthForm() {
     } catch (e) {
       setError("Failed to register: " + e.message);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    setLoading(true);
+    setIsLoading(true);
     setError("");
     try {
       const result = await googleLogin();
@@ -94,11 +95,11 @@ export default function AuthForm() {
       setError("Failed to login: " + e.message);
     } finally {
       navigate("/");
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <Loading />;
   }
 
