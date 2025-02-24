@@ -1,9 +1,13 @@
 import React, { use, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import TaskContext from "../contexts/TaskContext";
+import useAxios from "../hooks/useAxios";
+import AuthContext from "../contexts/AuthContext";
 
-const AddTaskModal = ({ column, onClose, onAddTask }) => {
-  const {setTasks} = use(TaskContext)
+const AddTaskModal = ({ column, onClose }) => {
+  const { setTasks, tasks } = use(TaskContext);
+  const { axiosPublic } = useAxios();
+  const { user } = use(AuthContext);
   const [task, setTask] = useState({
     title: "",
     description: "",
@@ -16,16 +20,18 @@ const AddTaskModal = ({ column, onClose, onAddTask }) => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!task.title.trim()) {
       alert("task title cannot be empty");
       return;
     }
     const tempId = uuidv4();
-    const newTask = { id: tempId, ...task,column:column };
-    setTasks(prev => [...prev, newTask]);
-    setTask({ title: "", description: "" });
+    const newTask = { id: tempId, ...task, column: column };
+    setTasks((prev) => [...prev, newTask]);
     onClose();
+    await axiosPublic.patch(`/tasks/${user.email}`, newTask);
+
+    setTask({ title: "", description: "" });
   };
 
   return (

@@ -3,9 +3,13 @@ import React, { use, useState, useRef } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { HiOutlineTrash } from "react-icons/hi2";
 import TaskContext from "../contexts/TaskContext";
+import AuthContext from "../contexts/AuthContext";
+import useAxios from "../hooks/useAxios";
 
 const TaskCard = ({ task }) => {
   const { tasks, setTasks } = use(TaskContext);
+  const { user } = use(AuthContext);
+  const { axiosPublic } = useAxios();
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedTitle, setEditedTitle] = useState(task.title);
@@ -14,16 +18,21 @@ const TaskCard = ({ task }) => {
   const titleRef = useRef(null);
   const descRef = useRef(null);
 
-  const deleteTask = (id) => {
+  const deleteTask = async (id) => {
     const newTask = tasks.filter((task) => task.id !== id);
     setTasks(newTask);
+    await axiosPublic.delete(`/tasks/${user.email}/${id}`);
   };
 
-  const updateTask = (key, value) => {
+  const updateTask = async (key, value) => {
+    if (value === task.title || value === task.description) return;
     const updatedTasks = tasks.map((t) =>
       t.id === task.id ? { ...t, [key]: value } : t
     );
     setTasks(updatedTasks);
+    await axiosPublic.patch(`/tasks/${user.email}/${task.id}`, {
+      [key]: value,
+    });
   };
 
   const handleBlur = (key, value) => {
@@ -83,17 +92,17 @@ const TaskCard = ({ task }) => {
           onBlur={() => handleBlur("title", editedTitle)}
           onKeyDown={(e) => handleKeyDown(e, "title", editedTitle)}
           autoFocus
-          className="text-base font-semibold font-inter w-full border rounded px-1"
+          className="text-base font-semibold font-inter border rounded px-1 w-[90%] max-w-[90%]"
         />
       ) : (
         <h3
-          className="text-base font-semibold font-inter "
+          className="text-base font-semibold font-inter max-w-[90%]"
           onClick={() => setIsEditingTitle(true)}
         >
           {task.title}
         </h3>
       )}
-      
+
       {isEditingDescription ? (
         <textarea
           ref={descRef}

@@ -1,19 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext, use } from "react";
 import TaskContext from "../contexts/TaskContext";
+import AuthContext from "../contexts/AuthContext";
+import useAxios from "../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
 
 const TaskProvider = ({ children }) => {
-  const initialTasks = [
-    { id: "1", title: "Task 1", column: "todo" },
-    { id: "2", title: "Task 2", column: "todo" },
-    { id: "3", title: "Task 3", column: "ongoing" },
-    { id: "4", title: "Task 4", column: "done" },
-  ];
+  const [tasks, setTasks] = useState([]);
+  const { axiosPublic } = useAxios();
+  const { user } = use(AuthContext);
 
-  const [tasks, setTasks] = useState(initialTasks);
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ["alltasks"],
+    queryFn: async () => {
+      const res = await axiosPublic.get(`/tasks/${user.email}`);
+      return res.data;
+    },
+    enabled: !!user,
+  });
+  useEffect(() => {
+    if (data?.length > 0) {
+      setTasks(data);
+    }
+  }, [data]);
 
+  // Fetch task data from the API when the component mounts
 
-  const taskObj = { tasks, setTasks };
-  return <TaskContext value={taskObj}>{children}</TaskContext>;
+  const taskObj = { tasks, setTasks, isLoading, refetch };
+  return (
+    <TaskContext.Provider value={taskObj}>{children}</TaskContext.Provider>
+  );
 };
 
 export default TaskProvider;

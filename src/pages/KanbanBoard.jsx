@@ -1,26 +1,27 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
   DndContext,
-  closestCorners,
   useSensor,
   useSensors,
-  PointerSensor,
   DragOverlay,
   MouseSensor,
   TouchSensor,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import Column from "../components/Column"; // Your column component
 import TaskCard from "../components/TaskCard"; // Your task component
 import TaskContext from "../contexts/TaskContext";
 import Navbar from "../components/Navbar";
+import useAxios from "../hooks/useAxios";
+import AuthContext from "../contexts/AuthContext";
+import Loading from "../components/Loading";
 
 const KanbanBoard = () => {
+  const { axiosPublic } = useAxios();
+
+  const { user } = use(AuthContext);
   const columns = ["todo", "ongoing", "done"];
-  const { tasks } = use(TaskContext);
+  const { tasks, setTasks, isLoading, refetch } = use(TaskContext);
   const [activeTask, setActiveTask] = useState(null);
 
   const handleDragStart = (event) => {
@@ -30,12 +31,43 @@ const KanbanBoard = () => {
   };
 
   const handleDragEnd = (event) => {
-    const {active,over} = event
-    
+    const { active, over } = event;
+
+    if (!over) return;
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    setTasks((tasks) => {
+      const activeTaskIdx = tasks?.findIndex((task) => task.id === activeId);
+      const overTaskIdx = tasks?.findIndex((task) => task.id === overId);
+
+      return arrayMove(tasks, activeTaskIdx, overTaskIdx);
+    });
+
+    axiosPublic.put(`/tasks/${user.email}`, tasks);
   };
 
   const handleDragOver = (event) => {
-    console.log("drag over", event);
+    const { active, over } = event;
+
+    if (!over) return;
+    const activeId = active.id;
+    const overId = over.id;
+    if (activeId === overId) return;
+
+    setTasks((tasks) => {
+      const activeTaskIdx = tasks?.findIndex((task) => task.id === activeId);
+      const overTaskIdx = tasks?.findIndex((task) => task.id === overId);
+      if (tasks[overTaskIdx]?.column) {
+        tasks[activeTaskIdx].column = tasks[overTaskIdx].column;
+        return arrayMove(tasks, activeTaskIdx, activeTaskIdx);
+      } else {
+        tasks[activeTaskIdx].column = over.id;
+        return arrayMove(tasks, activeTaskIdx, activeTaskIdx);
+      }
+    });
   };
 
   const mouseSensor = useSensor(MouseSensor, {
@@ -52,6 +84,10 @@ const KanbanBoard = () => {
 
   const sensors = useSensors(mouseSensor, touchSensor);
 
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Navbar />
@@ -62,15 +98,15 @@ const KanbanBoard = () => {
         onDragOver={handleDragOver}
       >
         <div
-          className="grid grid-cols-3 container mx-auto
-        max-w-[1280px] gap-12"
+          className="flex container mx-auto overflow-x-auto
+        max-w-[90%] xl:max-w-[1280px] gap-12"
         >
           {columns.map((column) => {
             return (
               <Column
                 key={column}
                 column={column}
-                tasks={tasks.filter((task) => {
+                tasks={tasks?.filter((task) => {
                   return task.column === column;
                 })}
               />

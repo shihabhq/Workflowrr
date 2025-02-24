@@ -9,24 +9,30 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import TaskContext from "../contexts/TaskContext";
+import FirstTask from "./FirstTask";
 
 const Column = ({ column, tasks }) => {
   const [modal, setModal] = useState(false);
 
+const hi = 'hi'
   return (
     <>
       <div
         key={column}
-        className="border border-gray-300 p-4 rounded-lg flex flex-col min-h-[250px] h-fit"
+        className="border basis-1/3 border-gray-300 
+        p-4 min-w-64 rounded-lg flex flex-col min-h-[250px] h-fit"
       >
-        <h2 className="text-2xl font-bold">{column}</h2>
+        <h2 className="text-2xl font-bold">{column.toUpperCase()}</h2>
 
         {/* Task List Container with flex-grow */}
         <SortableContext items={tasks} strategy={rectSortingStrategy}>
           <div className="flex flex-col space-y-4 flex-grow">
-            {tasks?.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
+            {tasks?.length > 0 ? (
+              tasks?.map((task) => <TaskCard key={task.id} task={task} />)
+            ) : (
+              <FirstTask column={column} />
+            )}
+            {}
           </div>
         </SortableContext>
 

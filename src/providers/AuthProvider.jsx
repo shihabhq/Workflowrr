@@ -23,7 +23,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const userLogin = (email, password) => {
-    setLoading(true)
+    setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
@@ -47,7 +47,6 @@ const AuthProvider = ({ children }) => {
       if (currentUser?.email) {
         setUser(currentUser);
         setLoading(false);
-        
       } else {
         setUser(null);
       }

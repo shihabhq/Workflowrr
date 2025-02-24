@@ -3,8 +3,10 @@ import AuthContext from "../contexts/AuthContext";
 import Loading, { SmallLoading } from "../components/Loading";
 import { FaGoogle } from "react-icons/fa";
 import { useNavigate } from "react-router";
+import useAxios from "../hooks/useAxios";
 
 export default function AuthForm() {
+  const { axiosPublic } = useAxios();
   const {
     loading,
     updateUser,
@@ -56,8 +58,15 @@ export default function AuthForm() {
     }
 
     try {
+      setLoading(true);
       await createUser(credentials.email, credentials.password);
       await updateUser({ displayName: credentials.username });
+
+      const taskObj = {
+        name: credentials.username,
+        email: credentials.email,
+      };
+      await axiosPublic.post("/users", taskObj);
       navigate("/");
     } catch (e) {
       setError("Failed to register: " + e.message);
@@ -70,11 +79,21 @@ export default function AuthForm() {
     setLoading(true);
     setError("");
     try {
-      await googleLogin();
-      navigate("/");
+      const result = await googleLogin();
+      const user = result.user;
+
+      // Now create the taskObj with user.displayName and user.email
+
+      const taskObj = {
+        name: user.displayName,
+        email: user.email,
+      };
+
+      await axiosPublic.post("/users", taskObj);
     } catch (e) {
       setError("Failed to login: " + e.message);
     } finally {
+      navigate("/");
       setLoading(false);
     }
   };
