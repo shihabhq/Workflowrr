@@ -44,8 +44,8 @@ const Navbar = () => {
 
   return (
     <nav
-      className="container mx-auto flex justify-between items-center 
-    text-btn py-12  max-w-[90%] lg:max-w-[1280px] relative"
+      className=" mx-auto flex justify-between items-center
+    text-btn py-12  w-[95%] lg:max-w-[1280px] relative"
     >
       <h1 className="font-poppins text-2xl sm:text-4xl font-bold">WorkFlowr</h1>
       <div className="relative min-w-20 sm:min-w-42 flex items-center justify-center">

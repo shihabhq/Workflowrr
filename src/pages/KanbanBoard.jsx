@@ -15,6 +15,7 @@ import Navbar from "../components/Navbar";
 import useAxios from "../hooks/useAxios";
 import AuthContext from "../contexts/AuthContext";
 import Loading from "../components/Loading";
+import { Toaster } from "react-hot-toast";
 
 const KanbanBoard = () => {
   const { axiosPublic } = useAxios();
@@ -90,6 +91,7 @@ const KanbanBoard = () => {
 
   return (
     <>
+      <Toaster />
       <Navbar />
       <DndContext
         sensors={sensors}

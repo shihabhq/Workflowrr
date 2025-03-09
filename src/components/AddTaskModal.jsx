@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import TaskContext from "../contexts/TaskContext";
 import useAxios from "../hooks/useAxios";
 import AuthContext from "../contexts/AuthContext";
+import toast from "react-hot-toast";
 
 const AddTaskModal = ({ column, onClose }) => {
   const { setTasks, tasks } = use(TaskContext);
@@ -22,7 +23,7 @@ const AddTaskModal = ({ column, onClose }) => {
 
   const handleSubmit = async () => {
     if (!task.title.trim()) {
-      alert("task title cannot be empty");
+      toast.error("task title cannot be empty");
       return;
     }
     const tempId = uuidv4();
@@ -35,12 +36,12 @@ const AddTaskModal = ({ column, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center ">
+    <div className="fixed inset-0 flex items-center justify-center z-50 ">
       <div
         onClick={onClose}
-        className="bg-black absolute z-10 opacity-20 h-full w-full"
+        className="bg-black absolute z-40 opacity-20 h-full w-full"
       ></div>
-      <div className="bg-white p-6 rounded-lg z-20 shadow-lg w-96">
+      <div className="bg-white p-6 rounded-lg z-100 shadow-lg w-96">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           Add Task to <span className="text-btn">{column}</span>
         </h2>

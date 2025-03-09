@@ -81,7 +81,7 @@ const TaskCard = ({ task }) => {
       {...attributes}
       {...listeners}
       style={style}
-      className="bg-white overflow-hidden w-full shadow-lg relative p-4 rounded-lg h-[100px]"
+      className="bg-white overflow-hidden w-full shadow-lg relative z-10 p-4 rounded-lg h-[100px]"
     >
       {isEditingTitle ? (
         <input

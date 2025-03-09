@@ -1,14 +1,11 @@
 import { use, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
-import { useDroppable } from "@dnd-kit/core";
 import AddTaskModal from "./AddTaskModal";
 import TaskCard from "./TaskCard";
 import {
   rectSortingStrategy,
   SortableContext,
-  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import TaskContext from "../contexts/TaskContext";
 import FirstTask from "./FirstTask";
 
 const Column = ({ column, tasks }) => {
